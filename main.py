@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from schema.requestModel import request_model
-from sklearn.ensemble import RandomForestClassifier
-from joblib import load
+
+import pickle
+
 import pandas as pd
 
 app = FastAPI()
@@ -24,7 +25,9 @@ RISK_CATEGORY_MAP = {0: "Low Risk", 1: "Medium Risk", 2: "High Risk"}
 
 @app.post("/predict")
 def predict(req: request_model):
-    model: RandomForestClassifier = load("trained_model.pkl")
+    with open("trained_model.pkl", "rb") as file:
+        model = pickle.load(file)
+
     dictionary = req.model_dump()
 
     for c in COUNTRIES:
